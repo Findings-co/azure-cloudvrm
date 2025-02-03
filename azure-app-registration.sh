@@ -39,3 +39,10 @@ SECRET_VALUE=$(az ad app credential reset --id "$APP_ID" --append --query "passw
 echo "✅ Client Secret Value: $SECRET_VALUE"
 echo "⚠️ Save the Client Secret Value securely, as it cannot be retrieved later!"
 
+# 🎉 Final Summary Printout
+echo "====================================="
+echo "✅ Step 1 Completed Successfully!"
+echo "✅ Application (client) ID: $APP_ID"
+echo "✅ Directory (tenant) ID: $TENANT_ID"
+echo "✅ Client secret (value): $SECRET_VALUE"
+echo "====================================="
