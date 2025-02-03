@@ -19,3 +19,8 @@ az role assignment create --assignee "$APP_ID" --role "Reader" --scope "/subscri
 
 echo "✅ Role assigned successfully!"
 
+# 🎉 Final Summary Printout
+echo "====================================="
+echo "✅ Step 2 Completed Successfully!"
+echo "✅ Subscription ID: $SUBSCRIPTION_ID"
+echo "====================================="
