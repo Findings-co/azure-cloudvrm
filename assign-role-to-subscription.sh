@@ -1,5 +1,20 @@
 #!/bin/bash
 
+# Variables (Replace with your app name)
+APP_NAME="FindingsCloudVRM"
+
+# Retrieve the Application ID
+APP_ID=$(az ad app list --display-name "$APP_NAME" --query "[0].appId" -o tsv)
+
+# Ensure APP_ID is not empty
+if [[ -z "$APP_ID" ]]; then
+    echo "❌ ERROR: Unable to find an application with the name '$APP_NAME'."
+    echo "Make sure Step 1 (App Registration) was completed successfully."
+    exit 1
+fi
+
+echo "✅ Application ID: $APP_ID"
+
 # Get Subscription ID
 SUBSCRIPTION_ID=$(az account show --query "id" -o tsv)
 echo "✅ Subscription ID: $SUBSCRIPTION_ID"
