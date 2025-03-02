@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# run the following command to execute this script
+# wget -qO- https://raw.githubusercontent.com/Findings-co/azure-cloudvrm/refs/heads/main/azure-setup.sh | bash
+
 # Variables (Replace with your values)
 APP_NAME="FindingsCloudVRM"
 SECRET_DESC="FindingsCloudVRM"
