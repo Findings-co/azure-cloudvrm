@@ -3,8 +3,6 @@
 # run the following command to execute this script
 # wget -qO- https://raw.githubusercontent.com/Findings-co/azure-cloudvrm/refs/heads/main/azure-setup.sh | bash
 
-set -euo pipefail
-
 # Check for required dependencies.
 command -v az >/dev/null || { echo "Error: Azure CLI is not installed."; exit 1; }
 command -v jq >/dev/null || { echo "Error: jq is not installed."; exit 1; }
