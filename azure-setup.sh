@@ -10,7 +10,8 @@ command -v az >/dev/null || { echo "Error: Azure CLI is not installed."; exit 1;
 command -v jq >/dev/null || { echo "Error: jq is not installed."; exit 1; }
 
 # Default values
-APP_NAME="FindingsCloudVRM"
+BASE_APP_NAME="FindingsCloudVRM"
+APP_NAME=""
 SUBSCRIPTION_ID=""
 UNINSTALL=false
 PARAMS_PROVIDED=false
@@ -18,9 +19,9 @@ PARAMS_PROVIDED=false
 function usage() {
     echo "Usage: $0 [options]"
     echo "Options:"
-    echo "  --app-name APP_NAME            Specify the Azure App Registration name (default: FindingsCloudVRM)"
+    echo "  --app-name APP_NAME            Specify the Azure App Registration name"
     echo "  --subscription-id ID           Specify the Azure Subscription ID"
-    echo "  --uninstall                    Uninstall the specified app"
+    echo "  --uninstall                    Uninstall the specified app (requires --app-name)"
     echo "  --help, -h                     Show this help message"
 }
 
@@ -70,6 +71,12 @@ function check_app_exists() {
 }
 
 function uninstall_app() {
+    if [[ -z "$APP_NAME" ]]; then
+        echo "❌ ERROR: --uninstall requires --app-name to specify which app to remove."
+        usage
+        exit 1
+    fi
+
     APP_ID=$(az ad app list --display-name "$APP_NAME" --query "[0].appId" -o tsv)
 
     if [[ -z "$APP_ID" ]]; then
@@ -118,6 +125,11 @@ function uninstall_app() {
 }
 
 function install_app() {
+    # If APP_NAME is empty (not provided via --app-name), generate a unique one
+    if [[ -z "$APP_NAME" ]]; then
+        APP_NAME="${BASE_APP_NAME}-$(tr -dc 'a-zA-Z' </dev/urandom | fold -w 5 | head -n 1)"
+    fi
+
     # Check for existing application
     if check_app_exists; then
         echo "❌ ERROR: An application with the name '$APP_NAME' already exists."
@@ -186,25 +198,18 @@ EOF
     echo "✅ Directory (tenant) ID: $TENANT_ID"
     echo "✅ Client secret (value): $SECRET_VALUE"
     echo "✅ Subscription ID: $SUBSCRIPTION_ID"
-    echo "✅ Custom Role Assigned: $CUSTOM_ROLE_NAME"
+    echo "✅ Application Name: ${APP_NAME}"
     echo "====================================="
 }
 
 # Main logic
-if [[ "$PARAMS_PROVIDED" == false ]]; then
-    if check_app_exists; then
-        echo "Default app '$APP_NAME' exists."
-        usage
-        exit 0
-    fi
-fi
-
 if [[ "$UNINSTALL" == true ]]; then
-    if check_app_exists; then
-        uninstall_app
-    else
-        echo "App '$APP_NAME' not found. Nothing to uninstall."
+    if [[ -z "$APP_NAME" ]]; then
+        echo "❌ ERROR: --uninstall requires --app-name to specify which app to remove."
+        usage
+        exit 1
     fi
+    uninstall_app
     exit 0
 fi
 
